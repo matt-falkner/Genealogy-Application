@@ -1,6 +1,6 @@
 # Genealogy-Application
 
-Started as the Angel of Death semester project refined from academic teaching purposes into an actually useful large scale program. 
+Started as the Angel of Death semester project, I've refined from it's academic teaching purposes into an actually useful large scale program. 
 
 ## How to Download
 
@@ -22,4 +22,17 @@ npm install
 ```bash
 npm run dev 8080
 ```
+
+## About the Project 
+
+There are 4 aspects to the project. 
+
+1. Writen in C, the shared library parses, creates, and most importantly analyizes GEDCOM Geneology Files.
+2. Writen in C, the API interface that will allow Javascript to interact with the API through JSON strings. 
+3. The Javascript, HTML, CSS Front End, Node.JS Backend that communicates with the C backend.
+4. Javascript interface with MYSQL database for cahcing users Geneology files meta data. IE. Instead of constantly quering the C parser for data, use already parsed data. 
+
+
+
+
 
