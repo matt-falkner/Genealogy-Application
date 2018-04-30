@@ -1,0 +1,192 @@
+
+/* Fixes a weird border issue for my table */
+#individuals {
+    border-collapse: collapse;
+}
+
+table.autosizer {
+    table-layout: auto;
+}
+
+
+
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+/* formats my output console to something that fits in half the screen */
+#operation-console {
+    height:175px;
+    width:100%;
+
+    overflow-y:scroll;
+    overflow-x:scroll;
+}
+
+/* Make my HR's THIC and Colorful!*/
+hr {
+  height: 6px;
+  margin-bottom:-4px;
+}
+
+.hr-coloring{
+  background-color:#428bca;
+}
+
+
+
+/* Basic formatting for my overall HTML*/
+html {
+    width: 60%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0 auto;
+    font-size: 16px;
+    background-color: #FFFFFF;
+}
+
+body {
+    height: 100%;
+    min-height: 100%;
+    line-height: 1.75;
+    background-color: #FFFFFF;
+}
+
+
+a:link {
+    text-decoration: none;
+}
+
+button::-moz-focus-inner {
+    border: 0;
+}
+
+button, input {
+    outline: none;
+}
+
+table {
+    height:300px;
+    border: solid #ddd;
+    overflow-y:scroll;
+    overflow-x:scroll;
+    display:block;
+}
+
+th, td {
+
+    text-align: left;
+    padding: 4px;
+    
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+td {
+  cursor: 
+  pointer;
+  border: 1px #DDD solid; 
+  padding: 3px; 
+  
+}
+
+
+.active {
+    background-color: #4CAF50;
+}
+
+/* Modifying the modal views */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.6); /* OPACITY */
+}
+.modal-content {
+    margin: 1% auto; 
+    padding: 30px;
+    border: 3px solid #888;
+    width: 80%; 
+
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Endless nonsense: make the table cell STAY BLUE WHEN SELECTED */
+.selected {
+    background-color: #5BC0DE;
+    color: #FFF;
+}
+.hover {
+    background-color: #e7e7e7;
+    color: black;
+
+}
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    border: none;
+
+}
+
+
+/* Hovering and select colors for tabs, same as tables */
+.tab button:hover {
+    background-color: #e7e7e7;
+}
+.tab button.active {
+    background-color: #ccc;
+}
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+

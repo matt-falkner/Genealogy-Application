@@ -1,0 +1,388 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<head>
+    <title>Geneology App</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create, Upload, Edit and Download your GEDCOM files.">
+    <meta name="keywords" content="Geneology,GEDCOM">
+    <meta name="author" content="Matthew Falkner">
+    <!-- Load jquery, bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="index.js"></script>
+</head>
+
+<body onload="viewDidLoad();">   
+  <div class="jumbotron text-center">
+    <h1>Geneology App</h1>
+    <p>Create, Upload, Edit and Download your GEDCOM files.</p> 
+  </div>      
+
+<div class="row">
+
+  <div class="col-sm-6">
+    <H2> Output Console </H2>
+    <table id="operation-console">
+      <thead>
+        <tr>
+          <th>State</th>
+          <th >Operation</th>
+        </tr>
+      </thead>
+      <tbody id="console-screen">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-sm-6">
+    <H2>Upload a <span style='color: #428bca;'><b> GEDCOM </b></span> File</H2>
+    <form ref='uploadForm' 
+        id='uploadForm' 
+        action='/upload' 
+        method='post' 
+        encType="multipart/form-data">
+          <input type="file" name="uploadFile" />
+          <input type='submit' value='Upload!' disabled/>
+    </form> 
+  </div>
+
+</div> 
+
+<hr class="hr-coloring" /> <br>
+
+
+<div id="buttonzone">
+  <H2 style=" display: inline-block;"> Select a  <span style='color: #428bca;'><b> FILE </b></span> on the server</H2>
+    <button id="myModal" type="button" style="float:right;" class="btn btn-success btn-med">Create NEW GEDCOM</button>
+</div>
+
+               <!-- The Modal -->
+<div id="myFileModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+      <h2> Create GEDCOM </h2> <br>
+        <div class="form-group">
+          <label for="filename">Filename [.ged or .GED only]</label>
+          <input type="text" class="form-control" id="filename" placeholder="familyTree.ged">
+        </div>
+        <div class="form-group">
+          <label for="givenName">Firstname:</label>
+          <input type="text" class="form-control" id="givenName" placeholder="John">
+        </div>
+         <div class="form-group">
+          <label for="surname">Lastname:</label>
+          <input type="text" class="form-control" id="surname" placeholder="Doe">
+        </div>
+        <div class="form-group">
+          <label for="address">Address:</label>
+          <input type="text" class="form-control" id="address" placeholder="1 Wall St.">
+        </div>
+         <div class="form-group">
+          <label for="source">Source:</label>
+          <input type="text" class="form-control" id="source" placeholder="Ex. PAF, Ancestry.com or Other.">
+        </div>
+
+        <div>
+         <label>Character Encoding of File:</label> <br>
+          <select id="encoding">
+            <option value="ANSI">ANSI</option>
+            <option value="UTF8">UTF8</option>
+            <option value="UNICODE">UNICODE</option>
+            <option value="ASCII">ASCII</option>
+          </select>
+        </div> <br>
+
+       <button type="button" onclick="sanitizeFileCreationInput();" class="btn btn-success btn-med">Create</button>
+       <button type="button" id="cancelFileModal" style="float:right;" onclick="" class="btn btn-danger btn-med">Cancel</button>
+  </div>
+</div>
+
+
+
+<table id="files" class="table no-hover">
+  <thead>
+    <tr>
+      <th>Filename (click to download)</th>
+      <th>Source</th>
+      <th>GEDC Encoding</th>
+      <th>Submitter Name</th>
+      <th>Submitter Address</th>
+      <th># of Individuals</th>
+      <th># of Families</th>
+    </tr>              
+  </thead>
+
+  <tbody id="files-screen">
+  </tbody>
+</table>
+
+ <!-- Tab links -->
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Individual_Viewer')" id="hometab">Individual Viewer</button>
+  <button class="tablinks" onclick="openTab(event, 'Get_Descendants')">Get Descendants</button>
+  <button class="tablinks" onclick="openTab(event, 'Get_Ancestors')">Get Ancestors</button>
+</div>
+
+
+
+<!-- INDIVIDAUL VIEWER TAB -->
+<div id="Individual_Viewer" class="tabcontent">
+  <H2 id = "selectedFileTitle" style=" display: inline-block;"> <b>NO FILE SELECTED</b> <small>select above </small>  </H2>
+  <button id="addIndividualModal" type="button" style="float:right;" class="btn btn-success btn-med">Insert Individual into Selected File</button>
+
+  <div id="indModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeIndModal">&times;</span>
+      <h2> Insert new Individual </h2> <br>
+      
+      <div class="form-group">
+        <label for="givenName">Firstname</label>
+        <input type="text" class="form-control" id="givenNameInd" placeholder="Jane">
+      </div>
+          
+      <div class="form-group">
+        <label for="surname">Lastname:</label>
+        <input type="text" class="form-control" id="surnameInd" placeholder="Doe">
+      </div>
+           
+      <div>
+       <label>Sex</label> <br>
+        <select id="sex">
+          <option value="Male">MALE</option>
+          <option value="Female">FEMALE</option>
+        </select>
+      </div>
+
+     <button type="button" onclick="sanitizeIndividualCreationInput();" class="btn btn-success btn-med">Insert into File</button>
+     <button type="button" id="cancelIndModal" style="float:right;" onclick="" class="btn btn-danger btn-med">Cancel</button>      
+    </div>
+  </div>
+  
+  <table id="individuals" class="table table-hover">
+    <thead>
+      <tr>
+        <th width="40%">Given Name</th>
+        <th width="40%">Surname</th>
+        <th>Sex</th>
+        <th>Number of Families</th>
+      </tr>
+    
+    </thead>
+    <tbody id="individuals-screen">
+    </tbody>
+  </table>
+</div>
+
+
+<div id="Get_Descendants" class="tabcontent">
+  <H2 id = "selectedFileTitleDecs" style=" display: inline-block;">  <b>NO FILE SELECTED</b> <small>select above </small>  </H2>
+  <p>Select an individual, and get their Descendants!</p>
+  <form>
+    <select id="getDSelector">   
+       <option value="File">NO FILE SELECTED</option>
+    </select>
+    <input id="numOfDesc" type="number" name="quantity" min="0" max="5000" value="0">  
+    # of Generations: 
+    <button type="button" id="getDescendantsButton" onclick="getDescendants()" class="btn btn-success btn-med">Get Descendants</button>
+  </form> <br> <br> 
+
+  <table id="descendants" class="table table-hover">
+    <thead>
+      <tr>
+        <th>Generation Level</th>
+        <th width="30%">Given Name</th>
+        <th width="30%">Surname</th>
+        <th>Sex</th>
+        <th>Number of Families</th>
+      </tr>
+    </thead>
+    <tbody id="descendants-screen">
+    </tbody>
+  </table>
+</div>
+
+<div id="Get_Ancestors" class="tabcontent">
+  <H2 id = "selectedFileTitleAnces" style=" display: inline-block;"> <b>NO FILE SELECTED</b> <small>select above </small>  </H2>
+  <p>List a persons ancestors</p>
+  <form>
+    <select id="getASelector">   
+      <option value="File">NO FILE SELECTED</option>
+    </select>
+    <input id="numOfAncs" type="number" name="quantity" min="0" max="5000" value="0">  
+    # of Generations: 
+    <button type="button" id="getAncestorsButton" onclick="getAncestors()" class="btn btn-success btn-med">Get Ancestors</button>
+  </form> <br> <br> 
+
+  <table id="ancestors" class="table table-hover">
+    <thead>
+      <tr>
+        <th>Generation Level</th>
+        <th width="30%">Given Name</th>
+        <th width="30%">Surname</th>
+        <th>Sex</th>
+        <th>Number of Families</th>
+      </tr>
+  </thead>
+
+  <tbody id="ancestors-screen">
+  </tbody>
+
+  </table>
+</div> 
+
+<hr class="hr-coloring" /> <br>
+
+<div id="login-form">
+  <h2> Login to your database </h2> 
+
+  <button onclick="document.getElementById('loginModal').style.display='block'">Login</button>
+
+  
+
+  <div id="loginModal" class="modal">
+    <span onclick="document.getElementById('loginModal').style.display='none'"
+  class="close" title="Close Modal">&times;</span>
+
+    <form class="modal-content animate">
+     
+      <div class="container">
+        <label for="uname"><b>Username</b></label>
+        <input type="text" id="username" placeholder="Enter Username" name="uname" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" id="password" placeholder="Enter Password" name="psw" required>
+
+         <label for="dbn"><b>Database Name</b></label>
+        <input type="database" id="database" placeholder="Database Name" name="dbn" required>
+
+
+        <button type="submit">Login</button>
+      </div>
+
+      <div class="container" style="background-color:#f1f1f1">
+        <button type="button" onclick="document.getElementById('loginModal').style.display='none'" class="cancelbtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="actions">
+
+  <div class="row">
+
+  <div class="col-sm-6">
+    <h2 id="logged-in-text">Logged In</h2> 
+    <p> Perform these General Actions to onto your Database: <p>
+
+    <button id="saveAllItems" onclick="saveAllFiles()">Save all Data</button> <p> <small> Saves all your File's to a FILE database and Saves all their individuals to a INDIVIDUAL database. These databases are Linked and you can peform querys for a files individuals. </small> <p>
+
+    <button onclick="clearDatabase()">Delete all data</button> <p> <small> Delete all data from INDIVIDUAL and FILE tables</small> <p>
+  </p>
+  </div>
+
+  <div class="col-sm-6">
+  <H2> Database Status View </H2>
+   <button style="float:right;" onclick="getTableSize()"> Display DB status </button> 
+    <table id="database-console">
+      <thead>
+        <tr>
+          <th>State</th>
+          <th >Operation</th>
+        </tr>
+      </thead>
+      <tbody id="database-screen">
+      </tbody>
+    </table>
+  </div>
+
+ </div>
+ <hr> <br>
+
+
+ <div class="row">
+  <div class="col-sm-8">
+    <h2> Construct a query and display results </h2>
+ </div> 
+  <div class="col-sm-2">
+   <button style="float:right;" onclick="customQuery('DESCRIBE FILE')"> Help for FILE table </button> 
+   <button style="float:right;" onclick="customQuery('DESCRIBE INDIVIDUAL')"> Help for INDIVIDUAL table </button> 
+  </div>
+</div>
+ <p> Select your Query option, run and view the results in the table below </p>
+
+
+
+ <div class="row">
+
+  <div class="col-sm-6">
+    <div id = "qselectordiv">
+      <select id="querySelector">   
+          <option selected value="getAllINDV">All Individuals</option>
+          <option value="getFileINDV">File's Individuals</option>
+          <option value="getAllSex">Sex/File </option>
+          <option value="join">Join FILE/INDIVIDUAL</option>
+          <option value="select">SELECT (Do anything)</option>
+      </select>
+      <p id="query-description"> Describing the query</p>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <input type="text" id="query-input"  placeholder="SELECT * FROM INDIVIDUAL WHERE surname=shakespeare">
+     <select id="sex-input">
+      <option selected value="M"> Male </option>
+      <option value="F">Female</option>
+    </select>
+
+    <select id="encoding-input">
+        <option value="ANSI">ANSI</option>
+        <option value="UTF8">UTF8</option>
+        <option value="UNICODE">UNICODE</option>
+        <option value="ASCII">ASCII</option>
+        <option value="ANSEL">ANSEL</option>
+    </select>
+
+    <select id ="files-input"></select>
+    <button id="continue" onclick="runQuery()"> Continue with Selected Query </button>
+
+  </div>
+</div>
+<br>
+    <table id="query-console" class="autosizer">
+      <thead>
+      </thead>
+      <tbody id="query-screen">
+      </tbody>
+    </table>
+
+  
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+<hr class="hr-coloring" /> <br>
+    
+<div class="jumbotron text-center">
+  <p>Matthew Falkner. CIS * 2750 Winter 2018</p> 
+  <p>C GEDCOM Parser Front End</p> 
+</div>
+
+
+
+
+
