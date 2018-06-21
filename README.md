@@ -1,4 +1,9 @@
 # Genealogy-Application
+Create, Edit, Upload and Download Geneology Files in the GEDCOM Standards 
+
+Features
+- View relationships between ancestors / descendants 
+
 
 Started as the Angel of Death semester project, I've refined from it's academic teaching purposes into an actually useful large scale program. 
 
