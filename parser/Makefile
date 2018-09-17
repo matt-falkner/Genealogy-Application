@@ -3,12 +3,20 @@ CPPFLAGS=
 CFLAGS = -Wall -std=c11 -g
 LDFLAGS= -L.
 
+UNAME := $(shell uname)
 
-all: ../libparser.so 
+ifeq ($(UNAME), Darwin)
+	SHAREDNAME=libparser.dylib 
+endif
+ifeq ($(UNAME), Linux)
+	SHAREDNAME=libparser.so
+endif
 
-../libparser.so: LinkedListAPI.o GEDCOMparser.o GEDCOMutilties.o 
-	$(CC) -shared -o ../libparser.so  GEDCOMparser.o LinkedListAPI.o  GEDCOMutilities.o 
 
+all: ../$(SHAREDNAME)
+
+../$(SHAREDNAME): LinkedListAPI.o GEDCOMparser.o GEDCOMutilties.o 
+	$(CC) -shared -o ../$(SHAREDNAME)  GEDCOMparser.o LinkedListAPI.o  GEDCOMutilities.o 
 
 GEDCOMparser.o: src/GEDCOMparser.c include/GEDCOMparser.h
 	$(CC) $(CFLAGS) -c -fpic src/GEDCOMparser.c -Iinclude 
@@ -19,19 +27,10 @@ GEDCOMutilties.o: src/GEDCOMutilities.c include/GEDCOMutilities.h
 LinkedListAPI.o: src/LinkedListAPI.c include/LinkedListAPI.h
 	$(CC) $(CFLAGS) -c -fpic src/LinkedListAPI.c -Iinclude 
 
-parser: ../libparser.so
+parser: ../$(SHAREDNAME)
 
 
 clean:
 	rm -rf *.o bin/*.so bin/*.dylib *.so ../*.so executable GEDCOMoutput.dat output.GED  Structure.GED toPrint.output
-
-run1: 
-	./executable testing/simple.ged
-	
-run2:
-	./executable testing/royal92.ged
-
-run3: 
-	./executable testing/shakespeare.ged
 	
 

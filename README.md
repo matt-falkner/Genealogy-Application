@@ -4,6 +4,12 @@ Create, Edit, Upload and Download Geneology Files in the GEDCOM Standards
 Features
 - View relationships between ancestors / descendants 
 
+## Pre Conditions 
+```bash
+node -v 
+```
+This project is dependant on nodejs v8.9.4 (LTS)
+
 
 Started as the Angel of Death semester project, I've refined from it's academic teaching purposes into an actually useful large scale program. 
 
