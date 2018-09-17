@@ -10,11 +10,14 @@ const app     = express();
 const path    = require("path");
 const fileUpload = require('express-fileupload');
 const mysql = require('mysql');
-
+var port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(fileUpload());
+
+app.use('/app', express.static(__dirname + '/app'));
+
 
 const fs = require('fs');
 const JavaScriptObfuscator = require('javascript-obfuscator');
@@ -50,9 +53,9 @@ app.post('/upload', function(req, res) {
   if(!req.files) {
     return res.status(400).send('No files were uploaded.');
   }
- 
+
   let uploadFile = req.files.uploadFile;
- 
+
   // Use the mv() method to place the file somewhere on your server
   uploadFile.mv('uploads/' + uploadFile.name, function(err) {
     if(err) {
@@ -78,8 +81,8 @@ app.get('/uploads/:name', function(req , res){
 /* THE GLUE */
 let parser = ffi.Library('./libparser', {
   'helloWorld' : [ 'string', [] ],
-  'getFileDetails' : ['string', ['string']], 
-  'getIndividualsInFile' : ['string', ['string']], 
+  'getFileDetails' : ['string', ['string']],
+  'getIndividualsInFile' : ['string', ['string']],
   'writeGEDCOMfromJSON' : ['string', ['string', 'string']],
   'injectIndividualIntoFile' : ['string', ['string', 'string']],
   'getDescendantsForPersonInFile' : ['string', ['string', 'string', 'int']],
@@ -94,12 +97,12 @@ console.log("ffiTest.js: returns  "+ string +"\n");
 var indexJS = require("./public/index.js");
 
 
-//******************** Your code goes here ******************** 
+//******************** Your code goes here ********************
 
 app.get('/someendpoint', function(req , res){
 
 const testFolder = 'uploads/';
-var combined = []; 
+var combined = [];
 
 fs.readdir(testFolder, (err, files) => {
   files.forEach(file => {
@@ -111,7 +114,7 @@ fs.readdir(testFolder, (err, files) => {
 
       let GEDJSONobj = JSON.parse(JSONresult);
       GEDJSONobj["filename"] = file;
-     
+
       combined.push(GEDJSONobj);
     }
     else {
@@ -130,8 +133,8 @@ fs.readdir(testFolder, (err, files) => {
 
 app.post('/getTableSize', function(req,res) {
 
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
 
  var connection = mysql.createConnection({
@@ -141,9 +144,9 @@ app.post('/getTableSize', function(req,res) {
         database : database
     });
 
- connection.connect( function(err) 
+ connection.connect( function(err)
  {
-    if (err) 
+    if (err)
     {
 		//connection.end();
       res.send({
@@ -152,21 +155,21 @@ app.post('/getTableSize', function(req,res) {
        });
     }
     else {
-	
+
       connection.query("SELECT COUNT(*) FROM FILE", function (err, rows, fields) {
-  
+
           if (err) {
-          
+
             //connection.end();
             res.send({
               connection:"FAILURE",
               response:err.code
             });
 
-          
+
         }
         else {
-        
+
           console.log(rows);
 
 
@@ -178,35 +181,35 @@ app.post('/getTableSize', function(req,res) {
           Object.keys(row).forEach(key => {
               numOfFiles = row[key];
 
-               }); 
+               });
 
 
       connection.query("SELECT COUNT(*) FROM INDIVIDUAL", function (err, rows, fields) {
-  
+
           if (err) {
-          
+
             //connection.end();
             res.send({
               connection:"FAILURE",
               response:err.code
             });
 
-          
+
         }
         else {
-        
+
           let row = rows[0];
 
 
           Object.keys(row).forEach(key => {
               numOfIndividuals = row[key];
 
-               }); 
+               });
 
-           //connection.end(); 
+           //connection.end();
             res.send({
               connection:"SUCCESS",
-              numOfFiles: numOfFiles, 
+              numOfFiles: numOfFiles,
               numOfIndividuals: numOfIndividuals
             });
         }
@@ -258,7 +261,7 @@ app.post('/create', function(req, res){
 
   let json = JSON.stringify(req.body);
   let filename = "uploads/" + req.body["filename"];
-  
+
   let result = parser.writeGEDCOMfromJSON(filename, json);
 
   res.send({
@@ -268,7 +271,7 @@ app.post('/create', function(req, res){
 });
 
 app.post('/insertIndividual', function(req, res){
-  
+
   let json = JSON.stringify(req.body);
   let filename = "uploads/" + req.body["filename"];
 
@@ -285,8 +288,8 @@ app.post('/insertIndividual', function(req, res){
 app.post('/saveAllIndividuals', function(req, res){
 
   console.log("Gets this far");
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
 
  connection = mysql.createConnection({
@@ -296,7 +299,7 @@ app.post('/saveAllIndividuals', function(req, res){
         database : database
     });
 
- 
+
  let json = req.body["json"];
  let object = JSON.parse(json);
 
@@ -310,7 +313,7 @@ app.post('/saveAllIndividuals', function(req, res){
   console.log(object);
 
 
-  for(var i = 0; i < object.length; i++) 
+  for(var i = 0; i < object.length; i++)
   {
 
 
@@ -334,8 +337,8 @@ app.post('/saveAllIndividuals', function(req, res){
 app.post('/saveAllFiles', function(req, res){
 
   console.log("Gets this far");
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
 
  var connection = mysql.createConnection({
@@ -345,7 +348,7 @@ app.post('/saveAllFiles', function(req, res){
         database : database
     });
 
- 
+
  let json = req.body["json"];
  let object = JSON.parse(json);
 
@@ -367,8 +370,8 @@ fs.readdir('uploads/', (err, files) => {
     {
 
       let GEDJSONobj = JSON.parse(JSONresult);
-      
-  
+
+
 
 
         var encoding = GEDJSONobj.encoding;
@@ -394,7 +397,7 @@ fs.readdir('uploads/', (err, files) => {
             });
         }
         else {
-        
+
         console.log(file);
 
         let file_loc = "uploads/" + file;
@@ -406,9 +409,9 @@ fs.readdir('uploads/', (err, files) => {
         if (individuals.length == 0)
         {
           console.log("No Individuals in " + filename + ".\nHowever, you can add some if you like!");
-        } 
+        }
         else {
-               for(var i = 0; i < individuals.length; i++) 
+               for(var i = 0; i < individuals.length; i++)
                {
                     var givenName = individuals[i].givenName;
                     var surname = individuals[i].surname;
@@ -440,7 +443,7 @@ fs.readdir('uploads/', (err, files) => {
     });
 
 
-    }   
+    }
   })
 
 });
@@ -448,7 +451,7 @@ fs.readdir('uploads/', (err, files) => {
     res.send({
       connection:"SUCCESS"
     });
-  
+
 
 });
 
@@ -458,8 +461,8 @@ app.post('/getAllIndividualsInDatabase', function(req, res)
 {
 
   console.log("GET INDIVILS FROM DATA");
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
 
  var connection = mysql.createConnection({
@@ -517,8 +520,8 @@ app.post('/getAllIndividualsInDatabase', function(req, res)
 
 app.post('/createTables', function(req, res)
 {
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
 
  var connection = mysql.createConnection({
@@ -529,7 +532,7 @@ app.post('/createTables', function(req, res)
     });
 
 
-var alreadyExists = false; 
+var alreadyExists = false;
 
  connection.connect( function(err) {
 
@@ -591,11 +594,11 @@ var alreadyExists = false;
 });
 
 
-app.post('/clearDatabase', function(req,res) 
+app.post('/clearDatabase', function(req,res)
 {
   console.log("end point hit");
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
 
    var connection = mysql.createConnection({
@@ -618,7 +621,7 @@ app.post('/clearDatabase', function(req,res)
           connection:"FAILURE"
         });
     }
-    else 
+    else
     {
       let sqlFILE = "DELETE FROM INDIVIDUAL";
       connection.query(sqlFILE, function (err, rows, fields) {
@@ -636,7 +639,7 @@ app.post('/clearDatabase', function(req,res)
         }
       });
 
-     
+
 		//connection.end();
        res.send({
           connection:"SUCCESS"
@@ -650,9 +653,9 @@ app.post('/clearDatabase', function(req,res)
 
 
 app.post('/customQuery', function(req, res){
-  
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
   let query = req.body["query"];
 
@@ -663,7 +666,7 @@ app.post('/customQuery', function(req, res){
         database : database
     });
 
-  connection.connect( function(err) 
+  connection.connect( function(err)
   {
     if (err) {
        //connection.end();
@@ -676,15 +679,15 @@ app.post('/customQuery', function(req, res){
         * */
     }
     else {
- 
+
       connection.query(query, function (err, rows, fields) {
         if (err) {
            //connection.end();
           //console.log("Something went wrong. "+err);
            //connection.end();
-           
+
              res.send({
-              connection:"FAILURE", 
+              connection:"FAILURE",
               response: err.code
             });
 
@@ -694,10 +697,10 @@ app.post('/customQuery', function(req, res){
           //connection.end();
           //connection.end();
            res.send({
-              connection:"SUCCESS", 
+              connection:"SUCCESS",
               response: rows
           });
-    
+
         }
       });
 
@@ -711,9 +714,9 @@ app.post('/customQuery', function(req, res){
 
 
 app.post('/connectToDatabase', function(req, res){
-  
-  let username = req.body["username"]; 
-  let password = req.body["password"]; 
+
+  let username = req.body["username"];
+  let password = req.body["password"];
   let database = req.body["database"];
 
    var connection = mysql.createConnection({
@@ -757,13 +760,15 @@ app.post('/connectToDatabase', function(req, res){
 
 
 
-app.listen(portNum);
+app.listen(port, function() {
+    console.log("Listening on port", + port);
+});
 
-console.log('Running app at localhost: ' + portNum);
+console.log('Running app at localhost: 3000');
 
 
 /*
- for(var i = 0; i < object.length; i++) 
+ for(var i = 0; i < object.length; i++)
   {
         var obj = object[i];
 
@@ -776,7 +781,7 @@ console.log('Running app at localhost: ' + portNum);
         var submitterName = object[i].submitterName;
         var submitterAddress = object[i].submitterAddress;
         var filelink = "./uploads/" + filename;
-        
+
         var sql = "INSERT INTO FILE (file_name, sub_name, sub_addr, source, encoding, version, num_individuals, num_families) VALUES ('" + filename + "','" + submitterName + "','" + submitterAddress +  "','" + source + "','" + encoding + "','" + gedcVerson + "','" + numOfIndividuals + "','" + numOfFamilies + "')";
         console.log(sql);
         console.log(filename);
@@ -795,7 +800,7 @@ console.log('Running app at localhost: ' + portNum);
     });
 
        // addRowToFilesView(filelink, filename, source, encoding, submitterName, submitterAddress, numOfIndividuals, numOfFamilies);
-        
+
         //addRowToTerminal("Success", "Found Valid Gedcom: " + filename + " in server uploads");
     }*/
 
