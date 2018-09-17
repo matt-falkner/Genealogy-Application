@@ -1,5 +1,5 @@
 # Genealogy-Application
-Create, Edit, Upload and Download Geneology Files in the GEDCOM Standards 
+Create, Edit, Upload and Download Geneaology Files in the GEDCOM Standards 
 
 ## Pre Conditions 
 This application requires Node v8.9.4 LTS, I would recommend [downloading nvm](https://github.com/creationix/nvm) which allows you to quickly switch between node and npm distrobutions. 
