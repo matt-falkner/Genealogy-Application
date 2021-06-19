@@ -1,0 +1,15 @@
+0 HEAD
+1 SOUR asd
+1 GEDC 
+2 VERS 5.50
+1 CHAR ANSEL
+1 SUBM @S01@
+0 @I1@ INDI
+1 NAME Matthew /Falkner/
+2 GIVN Matthew
+2 SURN Falkner
+1 SEX M
+0 @S01@ SUBM
+1 NAME Falkner Falkner
+1 ADDR asd
+0 TRLR
