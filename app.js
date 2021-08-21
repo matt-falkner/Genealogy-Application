@@ -1,7 +1,7 @@
 'use strict'
 
-// C library API
-const ffi = require('ffi');
+//// C library API
+const ffi = require('ffi-napi');
 
 // Express App (Routes)
 const express = require("express");
@@ -10,7 +10,7 @@ const app     = express();
 const path    = require("path");
 const fileUpload = require('express-fileupload');
 const mysql = require('mysql');
-var port = 3000;
+var port = 5000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -764,7 +764,7 @@ app.listen(port, function() {
     console.log("Listening on port", + port);
 });
 
-console.log('Running app at localhost: 3000');
+console.log('Running app at localhost' + port);
 
 
 /*
